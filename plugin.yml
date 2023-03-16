@@ -1,0 +1,6 @@
+name: LockYourItems
+author: Sanhak
+version: 0.1
+main: me.sanhak.lockyouritem.main.Main
+commands:
+  lock:
