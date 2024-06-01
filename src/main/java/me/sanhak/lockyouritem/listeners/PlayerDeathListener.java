@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import me.sanhak.lockyouritem.main.Main;
 import me.sanhak.lockyouritem.utils.ItemStackUtils;
 import me.sanhak.lockyouritem.utils.ListUtils;
 import me.sanhak.lockyouritem.utils.StringUtils;
@@ -23,10 +24,19 @@ public class PlayerDeathListener implements Listener {
 
     private Map<Player, Set<ItemStack>> lockedItems = Maps.newHashMap();
 
+    private Main plMain;
+
+    public PlayerDeathListener(Main plMain) {
+        this.plMain = plMain;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player diedPlayer = event.getEntity().getPlayer();
         Set<ItemStack> playerItems = Sets.newHashSet();
+
+        boolean keepInv = plMain.getConfig().getBoolean("keep-inventory");
+
         for (ItemStack itemStack : diedPlayer.getInventory().getContents()) {
             if (itemStack == null || itemStack.getType() == Material.AIR || !itemStack.hasItemMeta())
                 continue;
@@ -34,7 +44,10 @@ public class PlayerDeathListener implements Listener {
             else {
                 if (ItemStackUtils.hasLore(itemStack)
                         && ListUtils.contains(itemStack.getItemMeta().getLore(), StringUtils.format("&C&LLOCKED"))) {
-                    playerItems.add(itemStack.clone());
+
+                    if (keepInv) {
+                        playerItems.add(itemStack.clone());
+                    }
                     if (event.getDrops().contains(itemStack)) {
                         event.getDrops().remove(itemStack);
                     }
@@ -42,15 +55,18 @@ public class PlayerDeathListener implements Listener {
             }
         }
 
-        lockedItems.put(diedPlayer, playerItems);
-
+        if (keepInv) {
+            lockedItems.put(diedPlayer, playerItems);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
 
-        if (!(lockedItems.containsKey(player)))
+        boolean keepInv = plMain.getConfig().getBoolean("keep-inventory");
+
+        if (!(lockedItems.containsKey(player)) || !keepInv)
             return;
 
         Set<ItemStack> playerItems = lockedItems.get(player);

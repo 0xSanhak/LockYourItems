@@ -15,10 +15,12 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+		saveDefaultConfig();
+		saveConfig();
 		Bukkit.getConsoleSender().sendMessage(StringUtils.format("&c&LLockYourItems &fplugin has been &A&LENABLED"));
 		getCommand("lock").setExecutor(new LockCommand());
 		Bukkit.getPluginManager().registerEvents(new PlayerDropItemListener(), this);
-		Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);
 	}
 
 	@Override
