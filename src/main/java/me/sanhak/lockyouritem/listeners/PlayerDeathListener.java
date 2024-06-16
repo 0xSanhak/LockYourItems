@@ -22,9 +22,9 @@ import me.sanhak.lockyouritem.utils.StringUtils;
 
 public class PlayerDeathListener implements Listener {
 
-    private Map<Player, Set<ItemStack>> lockedItems = Maps.newHashMap();
+    private final Map<Player, Set<ItemStack>> lockedItems = Maps.newHashMap();
 
-    private Main plMain;
+    private final Main plMain;
 
     public PlayerDeathListener(Main plMain) {
         this.plMain = plMain;
@@ -41,20 +41,17 @@ public class PlayerDeathListener implements Listener {
             if (itemStack == null || itemStack.getType() == Material.AIR || !itemStack.hasItemMeta())
                 continue;
 
-            else {
-                if (ItemStackUtils.hasLore(itemStack)
-                        && ListUtils.contains(itemStack.getItemMeta().getLore(), StringUtils.format("&C&LLOCKED"))) {
+            if (!ItemStackUtils.hasLore(itemStack) && !ListUtils.contains(itemStack.getItemMeta().getLore(), StringUtils.format("&C&LLOCKED")))
+                continue;
 
-                    if (keepInv) {
-                        playerItems.add(itemStack.clone());
-                    }
-                    if (event.getDrops().contains(itemStack)) {
-                        event.getDrops().remove(itemStack);
-                    }
-                }
-            }
+            if (!keepInv)
+                continue;
+
+            playerItems.add(itemStack.clone());
+            event.getDrops().remove(itemStack);
+
+
         }
-
         if (keepInv) {
             lockedItems.put(diedPlayer, playerItems);
         }

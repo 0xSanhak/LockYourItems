@@ -2,36 +2,44 @@ package me.sanhak.lockyouritem.utils;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemStackUtils {
+import java.util.ArrayList;
+import java.util.List;
 
-	public static boolean isNull(ItemStack itemstack) {
-		if (itemstack == null || itemstack.getType() == Material.AIR) {
-			return true;
-		}
-		return false;
+public final class ItemStackUtils {
+
+
+	ItemStackUtils() {
+		throw new IllegalStateException("Initiating Utility class!");
 	}
+	public static boolean isNull(ItemStack itemstack) {
+        return itemstack == null || itemstack.getType() == Material.AIR;
+    }
 
 	public static boolean hasMeta(ItemStack itemstack) {
 		if (itemstack != null) {
-			if (itemstack.hasItemMeta() || itemstack.getItemMeta() != null) {
-				return true;
-			}
+            return itemstack.hasItemMeta() || itemstack.getItemMeta() != null;
 
 		}
 		return false;
 	}
 
 	public static boolean hasLore(ItemStack itemstack) {
-		if (itemstack != null) {
-			if (hasMeta(itemstack)) {
-				if (itemstack.getItemMeta().hasLore() || itemstack.getItemMeta().getLore() != null) {
-					return true;
-				}
-			}
+		return !isNull(itemstack) && hasMeta(itemstack) && (itemstack.getItemMeta().hasLore() || itemstack.getItemMeta().getLore() != null);
+	}
 
-		}
-		return false;
+
+	public static ItemStack createLockedItem(ItemStack oldItemStack) {
+		ItemStack newItemStack = oldItemStack.clone();
+		ItemMeta newItemStackMeta = newItemStack.getItemMeta();
+		List<String> loreList = new ArrayList<>();
+		loreList.add(StringUtils.format(" "));
+		loreList.add(StringUtils.format("&C&LLOCKED"));
+		loreList.add(StringUtils.format(" "));
+		newItemStackMeta.setLore(loreList);
+		newItemStack.setItemMeta(newItemStackMeta);
+		return newItemStack;
 	}
 
 }

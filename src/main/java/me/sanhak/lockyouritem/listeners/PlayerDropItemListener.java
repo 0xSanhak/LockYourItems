@@ -16,7 +16,7 @@ public class PlayerDropItemListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onDropLockedItem(PlayerDropItemEvent playerDropItemEvent) {
-		ItemStack droppedItem = (ItemStack) playerDropItemEvent.getItemDrop().getItemStack();
+		ItemStack droppedItem = playerDropItemEvent.getItemDrop().getItemStack();
 		if (ItemStackUtils.hasLore(droppedItem)) {
 			List<String> droppedItemLore = droppedItem.getItemMeta().getLore();
 			if (ListUtils.contains(droppedItemLore, StringUtils.format("&C&LLOCKED"))) {
