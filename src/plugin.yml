@@ -1,8 +1,13 @@
 name: LockYourItems
-author: Sanhak
-version: 0.3
+author:
+  - Sanhak
+  - Cobeine # thx for the improvements
+version: 0.3.1
 main: me.sanhak.lockyouritem.main.Main
 commands:
   lock:
     description: "Lock your item"
     usage: "/lock"
+  lockrl:
+    description: "reload configuration file"
+    usage: "/lockrl"
