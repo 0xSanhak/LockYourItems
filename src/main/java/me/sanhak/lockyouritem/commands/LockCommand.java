@@ -1,5 +1,7 @@
 package me.sanhak.lockyouritem.commands;
 
+import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,46 +16,34 @@ import me.sanhak.lockyouritem.utils.StringUtils;
 
 import org.bukkit.command.CommandExecutor;
 
-public class LockCommand implements CommandExecutor {
+public final class LockCommand {
 
-	@Override
-	public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-		if (!(commandSender instanceof Player)) {
-			commandSender.sendMessage(StringUtils.format("&cSorry , only players can perform this command !"));
-			return false;
-		}
-
-		Player player = (Player) commandSender;
-
-		if (player.hasPermission("lockeditems.use")) {
-			if (args.length == 0) {
-				ItemStack itemInPlayerHand = player.getItemInHand();
-				if (!ItemStackUtils.isNull(itemInPlayerHand)) {
-					player.setItemInHand(null);
-					new BukkitRunnable() {
-
-						@Override
-						public void run() {
-							player.setItemInHand(ItemCreator.createLockedItem(itemInPlayerHand));
-							PlayerUtils.successfullyMessage(player, "&aYou have been locked this item successfully !");
-
-						}
-					}.runTaskLater(Main.getInstance(), 20);
-
-				} else {
-					PlayerUtils.errorMessage(player,
-							"&cHey sir , the item cannot be null or air , please held real item in your hand in another once !");
-				}
-
-			} else {
-				player.sendMessage(StringUtils.format(
-						"&cWrong use sir , please try to write command like this &f&L/lock &cand held item in your hand"));
+	public LockCommand(@NonNull Main instance) {
+		instance.getCommand("lock").setExecutor((sender, command, label, args) -> {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(StringUtils.format("&cSorry , only players can perform this command !"));
+				return true;
 			}
-		} else {
-			PlayerUtils.noPermissionsMessage(player);
-		}
+			final Player player = (Player) sender;
+			if (!player.hasPermission("lockeditems.use")) {
+				PlayerUtils.noPermissionsMessage(player);
+				return true;
+			}
+			final ItemStack hand = player.getInventory().getItemInHand();
+			if (ItemStackUtils.isNull(hand)) {
+				PlayerUtils.errorMessage(player,
+						"&cHey sir , the item cannot be null or air , please held real item in your hand in another once !");
+				return true;
+			}
 
-		return true;
+			player.getInventory().setItemInHand(null);
+			Bukkit.getScheduler().runTaskLater(instance,() -> {
+				player.getInventory().setItemInHand(ItemCreator.createLockedItem(hand));
+				PlayerUtils.successfullyMessage(player, "&aYou have been locked this item successfully !");
+			},20L);
+
+			return true;
+		});
 	}
 
 }

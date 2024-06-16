@@ -1,5 +1,6 @@
 package me.sanhak.lockyouritem.main;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,7 +11,8 @@ import me.sanhak.lockyouritem.utils.StringUtils;
 
 public class Main extends JavaPlugin {
 
-	private static Main instance;
+	@Getter
+    private static Main instance;
 
 	@Override
 	public void onEnable() {
@@ -18,7 +20,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		saveConfig();
 		Bukkit.getConsoleSender().sendMessage(StringUtils.format("&c&LLockYourItems &fplugin has been &A&LENABLED"));
-		getCommand("lock").setExecutor(new LockCommand());
+		new LockCommand(this);
 		Bukkit.getPluginManager().registerEvents(new PlayerDropItemListener(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);
 	}
@@ -26,10 +28,6 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Bukkit.getConsoleSender().sendMessage(StringUtils.format("&c&LLockYourItems &fplugin has been &c&LDISABLED"));
-	}
-
-	public static Main getInstance() {
-		return instance;
 	}
 
 }
