@@ -33,7 +33,7 @@ public final class ItemStackUtils {
 	public static ItemStack createLockedItem(ItemStack oldItemStack) {
 		ItemStack newItemStack = oldItemStack.clone();
 		ItemMeta newItemStackMeta = newItemStack.getItemMeta();
-		List<String> loreList = new ArrayList<String>();
+		List<String> loreList = new ArrayList<>();
 		loreList.add(StringUtils.format(" "));
 		loreList.add(StringUtils.format("&C&LLOCKED"));
 		loreList.add(StringUtils.format(" "));
