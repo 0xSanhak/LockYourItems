@@ -2,19 +2,13 @@ package me.sanhak.lockyouritem.commands;
 
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.sanhak.lockyouritem.main.Main;
-import me.sanhak.lockyouritem.methods.ItemCreator;
 import me.sanhak.lockyouritem.utils.ItemStackUtils;
 import me.sanhak.lockyouritem.utils.PlayerUtils;
 import me.sanhak.lockyouritem.utils.StringUtils;
-
-import org.bukkit.command.CommandExecutor;
 
 public final class LockCommand {
 
@@ -38,7 +32,7 @@ public final class LockCommand {
 
 			player.getInventory().setItemInHand(null);
 			Bukkit.getScheduler().runTaskLater(instance,() -> {
-				player.getInventory().setItemInHand(ItemCreator.createLockedItem(hand));
+				player.getInventory().setItemInHand(ItemStackUtils.createLockedItem(hand));
 				PlayerUtils.successfullyMessage(player, "&aYou have been locked this item successfully !");
 			},20L);
 
